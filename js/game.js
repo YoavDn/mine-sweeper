@@ -34,7 +34,7 @@ function buildBoard() {
         minesAround: 0,
         isShown: false,
         isMine: false,
-        isMarked: true,
+        isMarked: false,
       }
     }
   }
@@ -51,12 +51,14 @@ function renderBoard(board) {
     for (var j = 0; j < board[0].length; j++) {
       var cell = board[i][j]
 
-      var className = 'cell cell-' + i + '-' + j
+      var className = addCellClass(cell, i, j)
+
       var cellValue = cell.isMine ? BOMB : cell.minesAround
 
       if (!cell.isShown) cellValue = ''
+      if (cell.isMarked) cellValue = FLAG
 
-      strHtml += `<td class="${className}" oncontextmenu="markCell(this)" onclick="cellClicked(
+      strHtml += `<td class="${className}" oncontextmenu="markCell(this, event)" onclick="cellClicked(
         this
       )">${cellValue}</td>`
     }
@@ -65,4 +67,16 @@ function renderBoard(board) {
   strHtml += `</table>`
 
   boardContainer.innerHTML = strHtml
+}
+
+function checkGameOver() {
+  if (gGame.markedCount + gGame.shownCount === gLevel.size ** 2) {
+    console.log('you won')
+    return
+  }
+}
+
+function gameOver() {
+  console.log('you lost')
+  return
 }

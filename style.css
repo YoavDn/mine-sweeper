@@ -24,7 +24,7 @@
 
 html {
   font-size: 62.5%;
-  font-family: "Inter", sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
 body {
@@ -105,36 +105,34 @@ table {
 }
 
 td {
-  width: 23px;
-  height: 23px;
+  background-color: var(--hidden-mine-color);
+  width: 25px;
+  height: 25px;
   border: var(--border-color) solid 0.01em;
   text-align: center;
   font-size: 1.2rem;
 }
 
-td:hover {
+/* td:hover {
   background-color: rgba(99, 99, 102);
-}
-.cell-hidden {
-  background-color: var(--hidden-mine-color);
-}
+} */
 
-.green-cell {
+.green {
   background-color: var(--green-cell);
 }
-.brown-cell {
+.brown {
   background-color: var(--brown-cell);
 }
-.empty-cell {
+.empty {
   background-color: var(--main-bg-color);
 }
 
-.flag {
+.marked {
   color: rgba(255, 69, 58);
-  font-size: 1.8rem;
+  font-size: 1.5rem;
 }
 
-.bomb-cell {
+.mine {
   background-color: rgba(255, 69, 58);
   font-size: 1.8rem;
   color: #202020;

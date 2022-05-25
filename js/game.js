@@ -4,6 +4,7 @@ const BOMB = '&ofcir;'
 const FLAG = '&ofcir;'
 const EL_FLAG = document.querySelector('.flags-text')
 const EL_TIME = document.querySelector('.time-text')
+const SMILEY = document.querySelector('.smiley')
 
 var gMark = 2
 
@@ -86,8 +87,9 @@ function cellClicked(elCell) {
   }
   var cellPos = getCelPos(elCell)
 
-  if (!gBoard[cellPos.i][cellPos.j].minesAround)
+  if (!gBoard[cellPos.i][cellPos.j].minesAround) {
     expandShown(gBoard, cellPos.i, cellPos.j)
+  }
   if (gBoard[cellPos.i][cellPos.j].isShown === false) gGame.shownCount++
 
   if (gBoard[cellPos.i][cellPos.j].isMine) gameOver()
@@ -144,40 +146,42 @@ function markCell(elCell, e) {
 function checkGameOver() {
   if (gGame.markedCount + gGame.shownCount === gLevel.size ** 2) {
     console.log('you won')
+    SMILEY.src = '/imges/won.svg'
     clearInterval(gInterval)
   }
 }
 
 function gameOver() {
+  SMILEY.src = '/imges/lost.svg'
   console.log('you lost')
   clearInterval(gInterval)
 }
 
-function expandShown(board, posI, posJ) {
-  for (var i = posI - 1; i <= posI + 1; i++) {
-    if (i < 0 || i >= board.length) continue
+// function expandShown(board, posI, posJ) {
+//   for (var i = posI - 1; i <= posI + 1; i++) {
+//     if (i < 0 || i >= board.length) continue
 
-    for (var j = posJ - 1; j <= posJ + 1; j++) {
-      if (j < 0 || j >= board[i].length) continue
+//     for (var j = posJ - 1; j <= posJ + 1; j++) {
+//       if (j < 0 || j >= board[i].length) continue
 
-      if (i === posI && j === posJ) continue
+//       if (i === posI && j === posJ) continue
 
-      if (
-        !board[i][j].minesAround &&
-        !board[i][j].isShown &&
-        !board[i][j].isMine
-      ) {
-        board[i][j].isShown = true
-        gGame.shownCount++
-        expandShown(board, i, j)
-      } else if (board[i][j].minesAround && !board[i][j].isShown) {
-        board[i][j].isShown = true
-        gGame.shownCount++
-        return
-      } else continue
-    }
-  }
-}
+//       if (
+//         !board[i][j].minesAround &&
+//         !board[i][j].isShown &&
+//         !board[i][j].isMine
+//       ) {
+//         board[i][j].isShown = true
+//         gGame.shownCount++
+//         expandShown(board, i, j)
+//       } else if (board[i][j].minesAround && !board[i][j].isShown) {
+//         board[i][j].isShown = true
+//         gGame.shownCount++
+//         return
+//       } else continue
+//     }
+//   }
+// }
 
 function resetGame() {
   gGame = {
@@ -192,16 +196,49 @@ function resetGame() {
   initGame()
 }
 
-// function expandShown(board, posI, posJ) {
-//   for (var i = posI - 1; i <= posI + 1; i++) {
-//     if (i < 0 || i >= board.length) continue
+function expandShown(board, posI, posJ) {
+  if (board[posI][posJ].isMine) return
 
-//     for (var j = posJ - 1; j <= posJ + 1; j++) {
-//       if (j < 0 || j >= board[i].length) continue
+  for (var i = posI - 1; i <= posI + 1; i++) {
+    if (i < 0 || i >= board.length) continue
 
-//       if (i === posI && j === posJ) continue
+    for (var j = posJ - 1; j <= posJ + 1; j++) {
+      if (j < 0 || j >= board[i].length) continue
 
-//      var cell = board[i][j]
-//     }
-//   }
-// }
+      if (i === posI && j === posJ) continue
+
+      var neg = board[i][j]
+
+      if (neg.minesAround === '' && !neg.isShown && !neg.isMine) {
+        neg.isShown = true
+
+        expandShown(board, i, j)
+      } else continue
+      reveledShown(board, i, j)
+    }
+  }
+}
+
+function reveledShown(board, posI, posJ) {
+  for (var i = posI - 1; i <= posI + 1; i++) {
+    if (i < 0 || i >= board.length) continue
+
+    for (var j = posJ - 1; j <= posJ + 1; j++) {
+      if (j < 0 || j >= board[i].length) continue
+
+      if (i === posI && j === posJ) continue
+      if (
+        (i === posI - 1 && j === posJ - 1) ||
+        (i === posI + 1 && j === posJ + 1) ||
+        (i === posI - 1 && j === posJ + 1) ||
+        (i === posI + 1 && j === posJ - 1)
+      )
+        continue
+      var neg = board[i][j]
+
+      if (!neg.isMine && !neg.isShown && neg.minesAround !== '') {
+        neg.isShown = true
+      }
+    }
+  }
+}

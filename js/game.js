@@ -2,11 +2,16 @@
 
 const BOMB = '&ofcir;'
 const FLAG = '&ofcir;'
+const EL_FLAG = document.querySelector('.flags-text')
+const EL_TIME = document.querySelector('.time-text')
+
+var gMark = 2
 
 var gBoard
+var gInterval
 
 var gLevel = {
-  size: 12,
+  size: 4,
   mines: 2,
 }
 var gGame = {
@@ -18,9 +23,6 @@ var gGame = {
 
 function initGame() {
   gBoard = buildBoard()
-  getRendomMinePos(gBoard)
-  updateCellNeg(gBoard)
-  console.log(gBoard)
   renderBoard(gBoard)
 }
 
@@ -67,9 +69,19 @@ function renderBoard(board) {
   strHtml += `</table>`
 
   boardContainer.innerHTML = strHtml
+  EL_FLAG.innerText = gMark
 }
 
 function cellClicked(elCell) {
+  if (!gGame.isOn) {
+    getRendomMinePos(gBoard)
+    updateCellNeg(gBoard)
+    gInterval = setInterval(() => {
+      gGame.secsPassed++
+      EL_TIME.innerText = gGame.secsPassed
+    }, 1000)
+    gGame.isOn = true
+  }
   var cellPos = getCelPos(elCell)
 
   if (!gBoard[cellPos.i][cellPos.j].minesAround)
@@ -113,28 +125,30 @@ function markCell(elCell, e) {
 
   if (cell.isMarked) {
     cell.isMarked = false
+    gMark++
   } else {
     cell.isMarked = true
+    gMark--
   }
 
-  checkGameOver()
   console.log(gGame.markedCount)
+  checkGameOver()
 
-  console.log(elCell)
-  console.log(gBoard[cellPos.i][cellPos.j])
+  //   console.log(elCell)
+  //   console.log(gBoard[cellPos.i][cellPos.j])
   renderBoard(gBoard)
 }
 
 function checkGameOver() {
   if (gGame.markedCount + gGame.shownCount === gLevel.size ** 2) {
     console.log('you won')
-    return
+    clearInterval(gInterval)
   }
 }
 
 function gameOver() {
   console.log('you lost')
-  return
+  clearInterval(gInterval)
 }
 
 function expandShown(board, posI, posJ) {
@@ -152,15 +166,26 @@ function expandShown(board, posI, posJ) {
         !board[i][j].isMine
       ) {
         board[i][j].isShown = true
-        gGame.isShown++
+        gGame.shownCount++
         expandShown(board, i, j)
       } else if (board[i][j].minesAround && !board[i][j].isShown) {
         board[i][j].isShown = true
-
-        gGame.isShown++
+        gGame.shownCount++
+        return
       } else continue
     }
   }
+}
+
+function resetGame() {
+  gGame = {
+    isOn: false,
+    shownCount: 0,
+    markedCount: 0,
+    secsPassed: 0,
+  }
+  gMark = gLevel.mines
+  initGame()
 }
 
 // function expandShown(board, posI, posJ) {

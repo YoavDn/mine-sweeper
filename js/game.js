@@ -1,6 +1,7 @@
-"use strict"
+'use strict'
 
-const BOMB = "&ofcir;"
+const BOMB = '&ofcir;'
+const FLAG = '&ofcir;'
 
 var gBoard
 
@@ -17,7 +18,8 @@ var gGame = {
 
 function initGame() {
   gBoard = buildBoard()
-  console.table(gBoard)
+  getRendomMinePos(gBoard)
+  updateCellNeg(gBoard)
   console.log(gBoard)
   renderBoard(gBoard)
 }
@@ -29,8 +31,8 @@ function buildBoard() {
     board[i] = []
     for (var j = 0; j < gLevel.size; j++) {
       board[i][j] = {
-        minesAroundCount: "",
-        isShown: true,
+        minesAround: 0,
+        isShown: false,
         isMine: false,
         isMarked: true,
       }
@@ -38,4 +40,29 @@ function buildBoard() {
   }
 
   return board
+}
+
+function renderBoard(board) {
+  var boardContainer = document.querySelector('.board-container')
+  var strHtml = '<table>'
+
+  for (var i = 0; i < board.length; i++) {
+    strHtml += `<tr>`
+    for (var j = 0; j < board[0].length; j++) {
+      var cell = board[i][j]
+
+      var className = 'cell cell-' + i + '-' + j
+      var cellValue = cell.isMine ? BOMB : cell.minesAround
+
+      if (!cell.isShown) cellValue = ''
+
+      strHtml += `<td class="${className}" oncontextmenu="markCell(this)" onclick="cellClicked(
+        this
+      )">${cellValue}</td>`
+    }
+    strHtml += `</tr>`
+  }
+  strHtml += `</table>`
+
+  boardContainer.innerHTML = strHtml
 }

@@ -102,7 +102,6 @@ h2 {
 table {
   margin: auto;
   border-collapse: collapse;
-  background-color: var(--hidden-mine-color);
 }
 
 td {
@@ -115,6 +114,9 @@ td {
 
 td:hover {
   background-color: rgba(99, 99, 102);
+}
+.cell-hidden {
+  background-color: var(--hidden-mine-color);
 }
 
 .green-cell {

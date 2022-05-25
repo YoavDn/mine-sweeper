@@ -5,11 +5,12 @@
 }
 
 :root {
+  /* --main-bg-color: rgba(44, 44, 46); */
   --main-bg-color: #202020;
   --container-nav-bg-color: #333533;
   --nav-link-bg-color: #474747;
 
-  --text-color: #dee2e6;
+  --text-color: #d9d9d9;
   --border-color: #b1a7a6;
 
   /* Game  */
@@ -33,6 +34,7 @@ body {
 
 h2 {
   font-size: 2.7rem;
+  font-weight: 700;
 }
 
 .container {
@@ -66,14 +68,14 @@ h2 {
   position: relative;
   display: flex;
   justify-content: space-around;
-  margin-left: 0.3rem;
-  width: 75px;
+  margin-left: 1rem;
+  width: 65px;
   height: 100%;
   align-items: center;
 }
 .circle {
-  width: 1.7rem;
-  height: 1.7rem;
+  width: 1.4rem;
+  height: 1.4rem;
   border-radius: 50%;
   background-color: var(--nav-link-bg-color);
   border: none;
@@ -85,27 +87,34 @@ h2 {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-bottom: var(--border-color) solid 0.01rem;
 }
 
 .span {
   font-weight: 300;
 }
 .board-container {
+  padding: 2rem;
   width: 90%;
   margin: auto;
   height: 350px;
 }
 table {
   margin: auto;
+  border-collapse: collapse;
+  background-color: var(--hidden-mine-color);
 }
 
 td {
-  background-color: var(--hidden-mine-color);
-  width: 33px;
-  height: 33px;
+  width: 23px;
+  height: 23px;
   border: var(--border-color) solid 0.01em;
   text-align: center;
-  font-size: 1.7rem;
+  font-size: 1.2rem;
+}
+
+td:hover {
+  background-color: rgba(99, 99, 102);
 }
 
 .green-cell {
@@ -116,4 +125,15 @@ td {
 }
 .empty-cell {
   background-color: var(--main-bg-color);
+}
+
+.flag {
+  color: rgba(255, 69, 58);
+  font-size: 1.8rem;
+}
+
+.bomb-cell {
+  background-color: rgba(255, 69, 58);
+  font-size: 1.8rem;
+  color: #202020;
 }

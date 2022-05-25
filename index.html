@@ -10,11 +10,10 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@200;500;600&display=swap"
       rel="stylesheet"
     />
-
     <link rel="stylesheet" href="style.css" />
     <title>Mine Sweeper</title>
   </head>
-  <body>
+  <body onload="initGame()">
     <div class="container">
       <div class="nav">
         <div class="circles">
@@ -31,5 +30,8 @@
 
       <div class="board-container"></div>
     </div>
+
+    <script src="/js/utils.js"></script>
+    <script src="/js/game.js"></script>
   </body>
 </html>

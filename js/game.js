@@ -74,8 +74,10 @@ function renderBoard(board) {
 
 function cellClicked(elCell) {
   if (!gGame.isOn) {
-    getRendomMinePos(gBoard)
+    getRendomMinePos(gBoard, gLevel.mines)
     updateCellNeg(gBoard)
+
+    //dont know why
     gInterval = setInterval(() => {
       gGame.secsPassed++
       EL_TIME.innerText = gGame.secsPassed
@@ -96,10 +98,10 @@ function cellClicked(elCell) {
   renderBoard(gBoard)
 }
 
-function getRendomMinePos(board = gLevel.size, mineCount = gLevel.mines) {
+function getRendomMinePos(board, mineCount) {
   var minesPosArr = []
   for (var i = 0; i < board.length; i++) {
-    for (var j = 0; j < board.length; j++) {
+    for (var j = 0; j < board[0].length; j++) {
       minesPosArr.push({ i, j })
     }
   }
@@ -109,7 +111,7 @@ function getRendomMinePos(board = gLevel.size, mineCount = gLevel.mines) {
   for (var i = 0; i < minesPosArr.length; i++) {
     gBoard[minesPosArr[i].i][minesPosArr[i].j].isMine = true
   }
-  console.log(minesPosArr)
+  // console.log(minesPosArr)
 }
 
 function shuffle(array) {
@@ -185,6 +187,8 @@ function resetGame() {
     secsPassed: 0,
   }
   gMark = gLevel.mines
+  clearInterval(gInterval)
+  EL_TIME.innerText = 0
   initGame()
 }
 

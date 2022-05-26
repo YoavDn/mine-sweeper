@@ -138,7 +138,7 @@ function markCell(elCell, e) {
   }
 
   console.log(gGame.markedCount)
-  checkGameOver()
+  checkGameWin()
 
   renderBoard(gBoard)
 }

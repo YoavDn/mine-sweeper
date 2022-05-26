@@ -5,6 +5,7 @@ const FLAG = '&ofcir;'
 const EL_FLAG = document.querySelector('.flags-text')
 const EL_TIME = document.querySelector('.time-text')
 const SMILEY = document.querySelector('.smiley')
+const LIFES = document.querySelectorAll('.live')
 
 var gMark = 2
 
@@ -20,6 +21,7 @@ var gGame = {
   shownCount: 0,
   markedCount: 0,
   secsPassed: 0,
+  lives: 3,
 }
 
 function initGame() {
@@ -88,16 +90,19 @@ function cellClicked(elCell) {
   var cellPos = getCelPos(elCell)
 
   if (!gBoard[cellPos.i][cellPos.j].minesAround) {
-    expandShown(gBoard, cellPos.i, cellPos.j)
+    expandShown(cellPos.i, cellPos.j)
   }
   if (gBoard[cellPos.i][cellPos.j].isShown === false) gGame.shownCount++
 
-  if (gBoard[cellPos.i][cellPos.j].isMine) gameOver()
+  if (gBoard[cellPos.i][cellPos.j].isMine) {
+    gameOver(gBoard, cellPos.i, cellPos.j)
+  }
 
   gBoard[cellPos.i][cellPos.j].isShown = true
 
   checkGameOver()
   renderBoard(gBoard)
+  console.log(gGame.shownCount)
 }
 
 function getRendomMinePos(board, mineCount) {
@@ -151,7 +156,14 @@ function checkGameOver() {
   }
 }
 
-function gameOver() {
+function gameOver(board, i, j) {
+  if (gGame.lives !== 0) {
+    gGame.lives--
+    LIFES[gGame.lives].classList.add('hidden') //
+
+    return
+  }
+
   SMILEY.src = '/imges/lost.svg'
   console.log('you lost')
   clearInterval(gInterval)
@@ -189,55 +201,52 @@ function resetGame() {
     shownCount: 0,
     markedCount: 0,
     secsPassed: 0,
+    lives: 3,
   }
+  SMILEY.src = '/imges/normal.svg'
   gMark = gLevel.mines
   clearInterval(gInterval)
   EL_TIME.innerText = 0
   initGame()
 }
 
-function expandShown(board, posI, posJ) {
-  if (board[posI][posJ].isMine) return
-
+function expandShown(posI, posJ) {
   for (var i = posI - 1; i <= posI + 1; i++) {
-    if (i < 0 || i >= board.length) continue
-
+    if (i < 0 || i >= gBoard.length) continue
     for (var j = posJ - 1; j <= posJ + 1; j++) {
-      if (j < 0 || j >= board[i].length) continue
-
+      if (j < 0 || j >= gBoard[i].length) continue
       if (i === posI && j === posJ) continue
+      var neg = gBoard[i][j]
 
-      var neg = board[i][j]
-
-      if (neg.minesAround === '' && !neg.isShown && !neg.isMine) {
-        neg.isShown = true
-
-        expandShown(board, i, j)
-      } else continue
-      reveledShown(board, i, j)
+      if (neg.isShown || neg.isMine || neg.minesAround >= 1) continue // skip the neg that are shown or mine
+      neg.isShown = true
+      gGame.shownCount++
+      if (!neg.minesAround) expandShown(i, j) // expend the cell with no  mines around
+      reveledNeg(i, j)
     }
   }
 }
 
-function reveledShown(board, posI, posJ) {
+function reveledNeg(posI, posJ) {
   for (var i = posI - 1; i <= posI + 1; i++) {
-    if (i < 0 || i >= board.length) continue
+    if (i < 0 || i >= gBoard.length) continue
 
     for (var j = posJ - 1; j <= posJ + 1; j++) {
-      if (j < 0 || j >= board[i].length) continue
+      if (j < 0 || j >= gBoard[i].length) continue
 
       if (i === posI && j === posJ) continue
       if (
-        (i === posI - 1 && j === posJ - 1) ||
+        (i === posI - 1 && j === posJ - 1) || // get rig of dignonal
         (i === posI + 1 && j === posJ + 1) ||
         (i === posI - 1 && j === posJ + 1) ||
         (i === posI + 1 && j === posJ - 1)
       )
         continue
-      var neg = board[i][j]
+      var neg = gBoard[i][j]
 
       if (!neg.isMine && !neg.isShown && neg.minesAround !== '') {
         neg.isShown = true
+        gGame.shownCount++
       }
     }
   }

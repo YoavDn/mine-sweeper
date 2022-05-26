@@ -97,7 +97,7 @@ li:hover {
   justify-content: center;
 }
 .game-info {
-  width: 90%;
+  width: 80%;
   height: 80px;
   margin: auto;
   display: flex;
@@ -107,6 +107,7 @@ li:hover {
 }
 
 .span {
+  position: absolute;
   font-weight: 300;
 }
 .board-container {
@@ -140,6 +141,10 @@ td {
 .brown {
   background-color: var(--brown-cell);
 }
+
+.red {
+  background-color: #ae2012;
+}
 .empty {
   background-color: var(--main-bg-color);
 }
@@ -169,11 +174,21 @@ td {
 }
 
 .smiley {
-  position: fixed;
-  left: 50%;
+  cursor: pointer;
+  position: relative;
+
   width: 30px;
   height: 30px;
-
   border-radius: 50%;
-  transform: translateX(-50%);
+}
+
+.lives {
+  display: flex;
+  width: 70%;
+  justify-content: flex-end;
+  margin-right: 4rem;
+}
+
+.hidden {
+  display: none;
 }

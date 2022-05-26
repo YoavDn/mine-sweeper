@@ -52,7 +52,7 @@ function addCellClass(cell, i, j) {
   if (cell.minesAround === 1 && cell.isShown) className = 'green ' + className
   if (cell.minesAround === 2 && cell.isShown) className = 'brown ' + className
   if (cell.minesAround === 3 && cell.isShown) className = 'orange ' + className
-  if (cell.minesAround > 3 && cell.isShown) className = 'red ' + className
+  if (cell.minesAround >= 3 && cell.isShown) className = 'red ' + className
 
   return className
 }

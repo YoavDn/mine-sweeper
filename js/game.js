@@ -152,7 +152,7 @@ function markCell(elCell, e, i, j) {
 function checkGameWin() {
   if (gGame.markedCount + gGame.shownCount === gLevel.size ** 2) {
     console.log('you won')
-    SMILEY.src = 'imges/won.svg'
+    SMILEY.style.fill = 'imges/won.svg'
     clearInterval(gInterval)
   }
 }

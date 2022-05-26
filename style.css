@@ -215,3 +215,14 @@ td {
   visibility: hidden;
   opacity: 0;
 }
+
+.footer-title {
+  width: 100%;
+  text-align: center;
+  font-weight: 200;
+}
+
+.yoav {
+  font-size: 1.3em;
+  font-weight: 500;
+}

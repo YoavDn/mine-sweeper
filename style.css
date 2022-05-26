@@ -111,7 +111,7 @@ li:hover {
   font-weight: 300;
 }
 .board-container {
-  padding: 2rem;
+  padding: 4rem;
 
   width: 90%;
   margin: auto;
@@ -174,9 +174,8 @@ td {
 }
 
 .smiley {
+  margin: auto;
   cursor: pointer;
-  position: relative;
-
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -191,4 +190,28 @@ td {
 
 .hidden {
   display: none;
+}
+
+.smiley-container {
+  height: 100%;
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.help-signs {
+  display: flex;
+
+  justify-content: space-around;
+  transform: translateY(150%);
+}
+
+.help {
+  width: 15px;
+  cursor: pointer;
+}
+
+.hide-help-sign {
+  visibility: hidden;
+  opacity: 0;
 }

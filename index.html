@@ -25,7 +25,9 @@
           <li class="easy" onclick="setDiff(this)">Easy</li>
           <li class="medium" onclick="setDiff(this)">Medium</li>
           <li class="hard" onclick="setDiff(this)">Hard</li>
+          <li class="help-nav" onclick="showHelp(this)">Help</li>
         </ul>
+
         <ul class="lives">
           <li class="live">&hearts;</li>
           <li class="live">&hearts;</li>
@@ -35,12 +37,35 @@
 
       <div class="game-info">
         <h2>Flags: <span class="span flags-text">0</span></h2>
-        <img
-          class="smiley"
-          onclick="resetGame()"
-          src="/imges/normal.svg"
-          alt=""
-        />
+        <div class="smiley-container">
+          <img
+            class="smiley"
+            onclick="resetGame()"
+            src="/imges/normal.svg"
+            alt=""
+          />
+          <div class="help-signs">
+            <img
+              class="help hidden"
+              onclick="activateHelp(this)"
+              src="./imges/help.svg"
+              alt=""
+            />
+            <img
+              class="help hidden"
+              onclick="activateHelp(this)"
+              src="./imges/help.svg"
+              alt=""
+            />
+            <img
+              class="help hidden"
+              onclick="activateHelp(this)"
+              src="./imges/help.svg"
+              alt=""
+            />
+          </div>
+        </div>
+
         <h2>Time: <span class="span time-text">0</span></h2>
       </div>
 

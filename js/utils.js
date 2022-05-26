@@ -72,3 +72,30 @@ function setDiff(elDiff) {
   }
   resetGame()
 }
+
+function resetmines() {
+  for (var i = 0; i < gboard.length; i++) {
+    for (var j = 0; j < length; j++) {}
+  }
+}
+
+function showHelp() {
+  var elHelpSigns = document.querySelectorAll('.help')
+
+  for (var i = 0; i < elHelpSigns.length; i++) {
+    elHelpSigns[i].classList.remove('hidden')
+  }
+}
+
+function activateHelp(elHelp) {
+  gGame.isHelp = true
+  elHelp.src = './imges/active-help.svg'
+  elHelp.id = 'active-cell'
+  console.log(elHelp.id)
+}
+
+function updateHelpSign() {
+  var elHelpSign = document.querySelector('#active-cell')
+  elHelpSign.classList.add('hide-help-sign')
+  elHelpSign.id = 'used'
+}

@@ -22,6 +22,8 @@ var gGame = {
   markedCount: 0,
   secsPassed: 0,
   lives: 3,
+  isHelp: false,
+  helpsLeft: 3,
 }
 
 function initGame() {
@@ -58,6 +60,12 @@ function renderBoard(board) {
 
       var className = addCellClass(cell, i, j)
 
+      if (cell.isMine) {
+        if (!gGame.isOn) {
+          cell.isShown = true
+        }
+      }
+
       var cellValue = cell.isMine ? BOMB : cell.minesAround
 
       if (!cell.isShown) cellValue = ''
@@ -80,7 +88,6 @@ function cellClicked(elCell) {
     getRendomMinePos(gBoard, gLevel.mines)
     updateCellNeg(gBoard)
 
-    //dont know why
     gInterval = setInterval(() => {
       gGame.secsPassed++
       EL_TIME.innerText = gGame.secsPassed
@@ -89,16 +96,23 @@ function cellClicked(elCell) {
   }
   var cellPos = getCelPos(elCell)
 
-  if (!gBoard[cellPos.i][cellPos.j].minesAround) {
-    expandShown(cellPos.i, cellPos.j)
-  }
-  if (gBoard[cellPos.i][cellPos.j].isShown === false) gGame.shownCount++
-
   if (gBoard[cellPos.i][cellPos.j].isMine) {
     gameOver(gBoard, cellPos.i, cellPos.j)
   }
 
+  if (!gBoard[cellPos.i][cellPos.j].minesAround) {
+    expandShown(cellPos.i, cellPos.j)
+  }
+
+  if (gGame.isHelp) {
+    getHelp(cellPos.i, cellPos.j)
+    setTimeout(() => hideHelpCells(cellPos.i, cellPos.j), 1000)
+    gGame.helpsLeft--
+    updateHelpSign()
+  }
   gBoard[cellPos.i][cellPos.j].isShown = true
+
+  if (gBoard[cellPos.i][cellPos.j].isShown === false) gGame.shownCount++
 
   checkGameOver()
   renderBoard(gBoard)
@@ -127,15 +141,17 @@ function shuffle(array) {
 
 function markCell(elCell, e) {
   e.preventDefault()
+
   var cellPos = getCelPos(elCell)
   var cell = gBoard[cellPos.i][cellPos.j]
 
   if (cell.isMine) gGame.markedCount++
 
+  if (!cell.isMarked && gMark === 0) return // if there no more flags to give return
   if (cell.isMarked) {
     cell.isMarked = false
     gMark++
-  } else {
+  } else if (!cell.isMarked) {
     cell.isMarked = true
     gMark--
   }
@@ -143,8 +159,6 @@ function markCell(elCell, e) {
   console.log(gGame.markedCount)
   checkGameOver()
 
-  //   console.log(elCell)
-  //   console.log(gBoard[cellPos.i][cellPos.j])
   renderBoard(gBoard)
 }
 
@@ -158,8 +172,10 @@ function checkGameOver() {
 
 function gameOver(board, i, j) {
   if (gGame.lives !== 0) {
-    gGame.lives--
-    LIFES[gGame.lives].classList.add('hidden') //
+    if (!gGame.isHelp) {
+      gGame.lives--
+      LIFES[gGame.lives].classList.add('hidden') //
+    }
 
     return
   }
@@ -202,7 +218,10 @@ function resetGame() {
     markedCount: 0,
     secsPassed: 0,
     lives: 3,
+    isHelp: false,
+    helpsLeft: 3,
   }
+
   SMILEY.src = '/imges/normal.svg'
   gMark = gLevel.mines
   clearInterval(gInterval)
@@ -211,6 +230,7 @@ function resetGame() {
 }
 
 function expandShown(posI, posJ) {
+  var count
   for (var i = posI - 1; i <= posI + 1; i++) {
     if (i < 0 || i >= gBoard.length) continue
     for (var j = posJ - 1; j <= posJ + 1; j++) {
@@ -218,11 +238,19 @@ function expandShown(posI, posJ) {
       if (i === posI && j === posJ) continue
       var neg = gBoard[i][j]
 
-      if (neg.isShown || neg.isMine || neg.minesAround >= 1) continue // skip the neg that are shown or mine
+      if (neg.isMarked && !neg.inMine) {
+        neg.isShown = true
+        neg.isMarked = false
+        gMark++
+        gGame.shownCount++
+        continue
+      }
+      if (neg.isMine || neg.isShown) continue
       neg.isShown = true
       gGame.shownCount++
-      if (!neg.minesAround) expandShown(i, j) // expend the cell with no  mines around
-      reveledNeg(i, j)
+      console.log(neg.minesAround)
+      if (neg.minesAround === '') expandShown(i, j) // expend the cell with no  mines around
+      // reveledNeg(i, j)
     }
   }
 }
@@ -235,19 +263,74 @@ function reveledNeg(posI, posJ) {
       if (j < 0 || j >= gBoard[i].length) continue
 
       if (i === posI && j === posJ) continue
-      if (
-        (i === posI - 1 && j === posJ - 1) || // get rig of dignonal
-        (i === posI + 1 && j === posJ + 1) ||
-        (i === posI - 1 && j === posJ + 1) ||
-        (i === posI + 1 && j === posJ - 1)
-      )
-        continue
+
       var neg = gBoard[i][j]
 
-      if (!neg.isMine && !neg.isShown && neg.minesAround !== '') {
+      if (!neg.isMine) {
         neg.isShown = true
         gGame.shownCount++
       }
     }
   }
 }
+
+function getHelp(posI, posJ) {
+  if (!gGame.isHelp) return
+
+  for (var i = posI - 1; i <= posI + 1; i++) {
+    if (i < 0 || i >= gBoard.length) continue
+
+    for (var j = posJ - 1; j <= posJ + 1; j++) {
+      if (j < 0 || j >= gBoard[i].length) continue
+
+      if (i === posI && j === posJ) continue
+
+      gBoard[i][j].isShown = true
+      console.log(gBoard[i][j].isShown)
+    }
+  }
+  renderBoard(gBoard)
+}
+
+function hideHelpCells(posI, posJ) {
+  for (var i = posI - 1; i <= posI + 1; i++) {
+    if (i < 0 || i >= gBoard.length) continue
+
+    for (var j = posJ - 1; j <= posJ + 1; j++) {
+      if (j < 0 || j >= gBoard[i].length) continue
+
+      if (i === posI && j === posJ) continue
+
+      gBoard[i][j].isShown = false
+      console.log(gBoard[i][j].isShown)
+    }
+  }
+  renderBoard(gBoard)
+}
+
+// function expandShown(posI, posJ) {
+//   console.log(posI, posJ)
+//   for (var i = posI - 1; i <= posI + 1; i++) {
+//     if (i < 0 || i >= gBoard.length) continue
+
+//     for (var j = posJ - 1; j <= posJ + 1; j++) {
+//       if (j < 0 || j >= gBoard[i].length) continue
+
+//       if (i === posI && j === posJ) continue
+//       if (gBoard[i][j].minesAround)
+//         if (gBoard[i][j].isMine || gBoard[i][j].isShown) continue
+
+//       gBoard[i][j].isShown = true
+//       console.log(
+//         'this is the mines around',
+//         gBoard[i][j].minesAround,
+//         'this is the pos:',
+//         i,
+//         j
+//       )
+
+//       if (!gBoard[i][j].minesAround) expandShown(i, j)
+//     }
+//   }
+//   return
+// }

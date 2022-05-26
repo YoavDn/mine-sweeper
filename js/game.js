@@ -60,12 +60,6 @@ function renderBoard(board) {
 
       var className = addCellClass(cell, i, j)
 
-      if (cell.isMine) {
-        if (!gGame.isOn) {
-          cell.isShown = true
-        }
-      }
-
       var cellValue = cell.isMine ? BOMB : cell.minesAround
 
       if (!cell.isShown) cellValue = ''
@@ -84,6 +78,7 @@ function renderBoard(board) {
 }
 
 function cellClicked(elCell) {
+  //first click to start
   if (!gGame.isOn) {
     getRendomMinePos(gBoard, gLevel.mines)
     updateCellNeg(gBoard)
@@ -96,47 +91,31 @@ function cellClicked(elCell) {
   }
   var cellPos = getCelPos(elCell)
 
+  checkGameWin()
+
+  //when cell contain mine
   if (gBoard[cellPos.i][cellPos.j].isMine) {
     gameOver(gBoard, cellPos.i, cellPos.j)
   }
 
+  //if the cell has no mines around
   if (!gBoard[cellPos.i][cellPos.j].minesAround) {
     expandShown(cellPos.i, cellPos.j)
   }
 
   if (gGame.isHelp) {
-    getHelp(cellPos.i, cellPos.j)
+    showHelpCells(cellPos.i, cellPos.j)
     setTimeout(() => hideHelpCells(cellPos.i, cellPos.j), 1000)
+    //update lives
     gGame.helpsLeft--
     updateHelpSign()
   }
-  gBoard[cellPos.i][cellPos.j].isShown = true
 
   if (gBoard[cellPos.i][cellPos.j].isShown === false) gGame.shownCount++
+  gBoard[cellPos.i][cellPos.j].isShown = true
 
-  checkGameOver()
   renderBoard(gBoard)
   console.log(gGame.shownCount)
-}
-
-function getRendomMinePos(board, mineCount) {
-  var minesPosArr = []
-  for (var i = 0; i < board.length; i++) {
-    for (var j = 0; j < board[0].length; j++) {
-      minesPosArr.push({ i, j })
-    }
-  }
-  shuffle(minesPosArr)
-  minesPosArr = minesPosArr.slice(-mineCount)
-
-  for (var i = 0; i < minesPosArr.length; i++) {
-    gBoard[minesPosArr[i].i][minesPosArr[i].j].isMine = true
-  }
-  // console.log(minesPosArr)
-}
-
-function shuffle(array) {
-  array.sort(() => Math.random() - 0.5)
 }
 
 function markCell(elCell, e) {
@@ -145,9 +124,11 @@ function markCell(elCell, e) {
   var cellPos = getCelPos(elCell)
   var cell = gBoard[cellPos.i][cellPos.j]
 
-  if (cell.isMine) gGame.markedCount++
+  if (cell.isMine) gGame.markedCount++ // counts only if flag is on bomb
 
   if (!cell.isMarked && gMark === 0) return // if there no more flags to give return
+
+  //dom mark logic
   if (cell.isMarked) {
     cell.isMarked = false
     gMark++
@@ -162,7 +143,7 @@ function markCell(elCell, e) {
   renderBoard(gBoard)
 }
 
-function checkGameOver() {
+function checkGameWin() {
   if (gGame.markedCount + gGame.shownCount === gLevel.size ** 2) {
     console.log('you won')
     SMILEY.src = '/imges/won.svg'
@@ -176,12 +157,13 @@ function gameOver(board, i, j) {
       gGame.lives--
       LIFES[gGame.lives].classList.add('hidden') //
     }
-
     return
   }
 
   SMILEY.src = '/imges/lost.svg'
-  console.log('you lost')
+  console.log('You lost')
+  renderAllMines(gBoard)
+  renderBoard(gBoard)
   clearInterval(gInterval)
 }
 
@@ -211,24 +193,6 @@ function gameOver(board, i, j) {
 //   }
 // }
 
-function resetGame() {
-  gGame = {
-    isOn: false,
-    shownCount: 0,
-    markedCount: 0,
-    secsPassed: 0,
-    lives: 3,
-    isHelp: false,
-    helpsLeft: 3,
-  }
-
-  SMILEY.src = '/imges/normal.svg'
-  gMark = gLevel.mines
-  clearInterval(gInterval)
-  EL_TIME.innerText = 0
-  initGame()
-}
-
 function expandShown(posI, posJ) {
   var count
   for (var i = posI - 1; i <= posI + 1; i++) {
@@ -255,26 +219,7 @@ function expandShown(posI, posJ) {
   }
 }
 
-function reveledNeg(posI, posJ) {
-  for (var i = posI - 1; i <= posI + 1; i++) {
-    if (i < 0 || i >= gBoard.length) continue
-
-    for (var j = posJ - 1; j <= posJ + 1; j++) {
-      if (j < 0 || j >= gBoard[i].length) continue
-
-      if (i === posI && j === posJ) continue
-
-      var neg = gBoard[i][j]
-
-      if (!neg.isMine) {
-        neg.isShown = true
-        gGame.shownCount++
-      }
-    }
-  }
-}
-
-function getHelp(posI, posJ) {
+function showHelpCells(posI, posJ) {
   if (!gGame.isHelp) return
 
   for (var i = posI - 1; i <= posI + 1; i++) {
@@ -308,6 +253,24 @@ function hideHelpCells(posI, posJ) {
   renderBoard(gBoard)
 }
 
+function resetGame() {
+  gGame = {
+    isOn: false,
+    shownCount: 0,
+    markedCount: 0,
+    secsPassed: 0,
+    lives: 3,
+    isHelp: false,
+    helpsLeft: 3,
+  }
+
+  SMILEY.src = '/imges/normal.svg'
+  EL_TIME.innerText = 0
+  gMark = gLevel.mines
+  clearInterval(gInterval)
+  initGame()
+}
+
 // function expandShown(posI, posJ) {
 //   console.log(posI, posJ)
 //   for (var i = posI - 1; i <= posI + 1; i++) {
@@ -333,4 +296,23 @@ function hideHelpCells(posI, posJ) {
 //     }
 //   }
 //   return
+// }
+
+// function reveledNeg(posI, posJ) {
+//   for (var i = posI - 1; i <= posI + 1; i++) {
+//     if (i < 0 || i >= gBoard.length) continue
+
+//     for (var j = posJ - 1; j <= posJ + 1; j++) {
+//       if (j < 0 || j >= gBoard[i].length) continue
+
+//       if (i === posI && j === posJ) continue
+
+//       var neg = gBoard[i][j]
+
+//       if (!neg.isMine) {
+//         neg.isShown = true
+//         gGame.shownCount++
+//       }
+//     }
+//   }
 // }

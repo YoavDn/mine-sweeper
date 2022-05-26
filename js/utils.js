@@ -1,5 +1,13 @@
 'use strict'
 
+function renderAllMines(board) {
+  for (var i = 0; i < board.length; i++) {
+    for (var j = 0; j < board[0].length; j++) {
+      if (board[i][j].isMine) board[i][j].isShown = true
+    }
+  }
+}
+
 function getRandomArbitrary(min, max) {
   return Math.random() * (max - min) + min
 }
@@ -71,12 +79,6 @@ function setDiff(elDiff) {
     gLevel.mines = 30
   }
   resetGame()
-}
-
-function resetmines() {
-  for (var i = 0; i < gboard.length; i++) {
-    for (var j = 0; j < length; j++) {}
-  }
 }
 
 function showHelp() {

@@ -4,25 +4,6 @@ function getRandomArbitrary(min, max) {
   return Math.random() * (max - min) + min
 }
 
-// function updateCellNeg(board) {
-//   for (var i = 0; i < board.length; i++) {
-//     for (var j = 0; j < board[0].length; j++) {
-//       var cell = board[i][j]
-//       cell.minesAround = setMinesNegsCount(board, i, j)
-//       if (!cell.minesAround) cell.minesAround = ''
-//     }
-//   }
-// }
-
-function getCelPos(cell) {
-  var cellPos = cell.className.split('-')
-
-  return {
-    i: cellPos[1],
-    j: cellPos[2],
-  }
-}
-
 function shuffle(array) {
   array.sort(() => Math.random() - 0.5)
 }
@@ -61,13 +42,13 @@ function showHelp() {
   var elHelpSigns = document.querySelectorAll('.help')
 
   for (var i = 0; i < elHelpSigns.length; i++) {
-    elHelpSigns[i].classList.remove('hidden')
+    elHelpSigns[i].classList.toggle('hide-help-sign')
   }
 }
 
 function activateHelp(elHelp) {
   gGame.isHelp = true
-  elHelp.src = './imges/active-help.svg'
+  elHelp.src = 'imges/active-help.svg'
   elHelp.id = 'active-cell'
   console.log(elHelp.id)
 }
@@ -78,6 +59,14 @@ function updateHelpSign() {
   elHelpSign.id = 'used'
 }
 
-function shuffle(array) {
-  array.sort(() => Math.random() - 0.5)
+function resetDom() {
+  SMILEY.src = 'imges/normal.svg'
+  EL_TIME.innerText = 0
+
+  var elHelpSigns = document.querySelectorAll('.help')
+
+  for (var i = 0; i < elHelpSigns.length; i++) {
+    elHelpSigns[i].classList.add('hide-help-sign')
+    LIFES[i].classList.remove('hidden')
+  }
 }

@@ -105,9 +105,11 @@ function cellClicked(elCell, i, j) {
     expandShown(i, j)
   }
 
+  //help
   if (gGame.isHelp) {
-    showHelpCells(i, j)
-    setTimeout(() => hideHelpCells(i, j), 1000)
+    getHelp(i, j)
+    setTimeout(() => getHelp(i, j, false), 1000)
+    gGame.isHelp = false
     //update lives
     gGame.helpsLeft--
     updateHelpSign()
@@ -150,7 +152,7 @@ function markCell(elCell, e, i, j) {
 function checkGameWin() {
   if (gGame.markedCount + gGame.shownCount === gLevel.size ** 2) {
     console.log('you won')
-    SMILEY.src = '/imges/won.svg'
+    SMILEY.src = 'imges/won.svg'
     clearInterval(gInterval)
   }
 }
@@ -171,33 +173,8 @@ function gameOver(board, i, j) {
   clearInterval(gInterval)
 }
 
-// function expandShown(board, posI, posJ) {
-//   for (var i = posI - 1; i <= posI + 1; i++) {
-//     if (i < 0 || i >= board.length) continue
-
-//     for (var j = posJ - 1; j <= posJ + 1; j++) {
-//       if (j < 0 || j >= board[i].length) continue
-
-//       if (i === posI && j === posJ) continue
-
-//       if (
-//         !board[i][j].minesAround &&
-//         !board[i][j].isShown &&
-//         !board[i][j].isMine
-//       ) {
-//         board[i][j].isShown = true
-//         gGame.shownCount++
-//         expandShown(board, i, j)
-//       } else if (board[i][j].minesAround && !board[i][j].isShown) {
-//         board[i][j].isShown = true
-//         gGame.shownCount++
-//         return
-//       } else continue
-//     }
-//   }
-// }
-
 function expandShown(posI, posJ) {
+  if (gGame.isHelp) return
   for (var i = posI - 1; i <= posI + 1; i++) {
     if (i < 0 || i >= gBoard.length) continue
     for (var j = posJ - 1; j <= posJ + 1; j++) {
@@ -222,37 +199,19 @@ function expandShown(posI, posJ) {
   }
 }
 
-function showHelpCells(posI, posJ) {
-  if (!gGame.isHelp) return
-
+function getHelp(posI, posJ, display = true) {
   for (var i = posI - 1; i <= posI + 1; i++) {
     if (i < 0 || i >= gBoard.length) continue
 
     for (var j = posJ - 1; j <= posJ + 1; j++) {
       if (j < 0 || j >= gBoard[i].length) continue
 
-      if (i === posI && j === posJ) continue
+      // if (i === posI && j === posJ) continue
 
-      gBoard[i][j].isShown = true
-      console.log(gBoard[i][j].isShown)
+      gBoard[i][j].isShown = display
     }
   }
-}
-
-function hideHelpCells(posI, posJ) {
-  gGame.isHelp = false
-  for (var i = posI - 1; i <= posI + 1; i++) {
-    if (i < 0 || i >= gBoard.length) continue
-
-    for (var j = posJ - 1; j <= posJ + 1; j++) {
-      if (j < 0 || j >= gBoard[i].length) continue
-
-      if (i === posI && j === posJ) continue
-
-      gBoard[i][j].isShown = false
-      console.log(gBoard[i][j].isShown)
-    }
-  }
+  renderBoard(gBoard)
 }
 
 function resetGame() {
@@ -265,56 +224,8 @@ function resetGame() {
     isHelp: false,
     helpsLeft: 3,
   }
-
-  SMILEY.src = '/imges/normal.svg'
-  EL_TIME.innerText = 0
   gMark = gLevel.mines
+  resetDom()
   clearInterval(gInterval)
   initGame()
 }
-
-// function expandShown(posI, posJ) {
-//   console.log(posI, posJ)
-//   for (var i = posI - 1; i <= posI + 1; i++) {
-//     if (i < 0 || i >= gBoard.length) continue
-
-//     for (var j = posJ - 1; j <= posJ + 1; j++) {
-//       if (j < 0 || j >= gBoard[i].length) continue
-
-//       if (i === posI && j === posJ) continue
-//       if (gBoard[i][j].minesAround)
-//         if (gBoard[i][j].isMine || gBoard[i][j].isShown) continue
-
-//       gBoard[i][j].isShown = true
-//       console.log(
-//         'this is the mines around',
-//         gBoard[i][j].minesAround,
-//         'this is the pos:',
-//         i,
-//         j
-//       )
-
-//       if (!gBoard[i][j].minesAround) expandShown(i, j)
-//     }
-//   }
-//   return
-// }
-
-// function reveledNeg(posI, posJ) {
-//   for (var i = posI - 1; i <= posI + 1; i++) {
-//     if (i < 0 || i >= gBoard.length) continue
-
-//     for (var j = posJ - 1; j <= posJ + 1; j++) {
-//       if (j < 0 || j >= gBoard[i].length) continue
-
-//       if (i === posI && j === posJ) continue
-
-//       var neg = gBoard[i][j]
-
-//       if (!neg.isMine) {
-//         neg.isShown = true
-//         gGame.shownCount++
-//       }
-//     }
-//   }
-// }

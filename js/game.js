@@ -57,16 +57,18 @@ function renderBoard(board) {
     strHtml += `<tr>`
     for (var j = 0; j < board[0].length; j++) {
       var cell = board[i][j]
+      cell.minesAround = setMinesNegsCount(gBoard, i, j)
 
       var className = addCellClass(cell, i, j)
 
       var cellValue = cell.isMine ? BOMB : cell.minesAround
+      if (!cellValue) cellValue = ''
 
       if (!cell.isShown) cellValue = ''
       if (cell.isMarked) cellValue = FLAG
 
-      strHtml += `<td class="${className}" oncontextmenu="markCell(this, event)" onclick="cellClicked(
-        this
+      strHtml += `<td class="${className}" oncontextmenu="markCell(this, event, ${i},${j})" onclick="cellClicked(
+        this ,${i},${j}
       )">${cellValue}</td>`
     }
     strHtml += `</tr>`
@@ -77,11 +79,11 @@ function renderBoard(board) {
   EL_FLAG.innerText = gMark
 }
 
-function cellClicked(elCell) {
+function cellClicked(elCell, i, j) {
   //first click to start
   if (!gGame.isOn) {
     getRendomMinePos(gBoard, gLevel.mines)
-    updateCellNeg(gBoard)
+    renderBoard(gBoard)
 
     gInterval = setInterval(() => {
       gGame.secsPassed++
@@ -89,40 +91,42 @@ function cellClicked(elCell) {
     }, 1000)
     gGame.isOn = true
   }
-  var cellPos = getCelPos(elCell)
-
-  checkGameWin()
+  // var cellPos = getCelPos(elCell)
 
   //when cell contain mine
-  if (gBoard[cellPos.i][cellPos.j].isMine) {
-    gameOver(gBoard, cellPos.i, cellPos.j)
+  if (gBoard[i][j].isMine) {
+    gameOver(gBoard, i, j)
   }
 
   //if the cell has no mines around
-  if (!gBoard[cellPos.i][cellPos.j].minesAround) {
-    expandShown(cellPos.i, cellPos.j)
+  if (!gBoard[i][j].minesAround && !gBoard[i][j].isMine) {
+    console.log(gBoard[i][j])
+    console.log('ues')
+    expandShown(i, j)
   }
 
   if (gGame.isHelp) {
-    showHelpCells(cellPos.i, cellPos.j)
-    setTimeout(() => hideHelpCells(cellPos.i, cellPos.j), 1000)
+    showHelpCells(i, j)
+    setTimeout(() => hideHelpCells(i, j), 1000)
     //update lives
     gGame.helpsLeft--
     updateHelpSign()
+    return
   }
 
-  if (gBoard[cellPos.i][cellPos.j].isShown === false) gGame.shownCount++
-  gBoard[cellPos.i][cellPos.j].isShown = true
+  if (gBoard[i][j].isShown === false) gGame.shownCount++
+  gBoard[i][j].isShown = true
 
+  checkGameWin()
   renderBoard(gBoard)
   console.log(gGame.shownCount)
 }
 
-function markCell(elCell, e) {
+function markCell(elCell, e, i, j) {
   e.preventDefault()
 
-  var cellPos = getCelPos(elCell)
-  var cell = gBoard[cellPos.i][cellPos.j]
+  // var cellPos = getCelPos(elCell)
+  var cell = gBoard[i][j]
 
   if (cell.isMine) gGame.markedCount++ // counts only if flag is on bomb
 
@@ -194,7 +198,6 @@ function gameOver(board, i, j) {
 // }
 
 function expandShown(posI, posJ) {
-  var count
   for (var i = posI - 1; i <= posI + 1; i++) {
     if (i < 0 || i >= gBoard.length) continue
     for (var j = posJ - 1; j <= posJ + 1; j++) {
@@ -213,7 +216,7 @@ function expandShown(posI, posJ) {
       neg.isShown = true
       gGame.shownCount++
       console.log(neg.minesAround)
-      if (neg.minesAround === '') expandShown(i, j) // expend the cell with no  mines around
+      if (!neg.minesAround) expandShown(i, j) // expend the cell with no  mines around
       // reveledNeg(i, j)
     }
   }
@@ -234,10 +237,10 @@ function showHelpCells(posI, posJ) {
       console.log(gBoard[i][j].isShown)
     }
   }
-  renderBoard(gBoard)
 }
 
 function hideHelpCells(posI, posJ) {
+  gGame.isHelp = false
   for (var i = posI - 1; i <= posI + 1; i++) {
     if (i < 0 || i >= gBoard.length) continue
 
@@ -250,7 +253,6 @@ function hideHelpCells(posI, posJ) {
       console.log(gBoard[i][j].isShown)
     }
   }
-  renderBoard(gBoard)
 }
 
 function resetGame() {

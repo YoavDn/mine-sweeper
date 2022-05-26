@@ -1,31 +1,7 @@
 'use strict'
 
-function renderAllMines(board) {
-  for (var i = 0; i < board.length; i++) {
-    for (var j = 0; j < board[0].length; j++) {
-      if (board[i][j].isMine) board[i][j].isShown = true
-    }
-  }
-}
-
 function getRandomArbitrary(min, max) {
   return Math.random() * (max - min) + min
-}
-
-function setMinesNegsCount(board, posI, posJ) {
-  var count = 0
-  for (var i = posI - 1; i <= posI + 1; i++) {
-    if (i < 0 || i >= board.length) continue
-
-    for (var j = posJ - 1; j <= posJ + 1; j++) {
-      if (j < 0 || j >= board[i].length) continue
-
-      if (i === posI && j === posJ) continue
-
-      if (board[i][j].isMine) count++
-    }
-  }
-  return count
 }
 
 function updateCellNeg(board) {
@@ -100,4 +76,8 @@ function updateHelpSign() {
   var elHelpSign = document.querySelector('#active-cell')
   elHelpSign.classList.add('hide-help-sign')
   elHelpSign.id = 'used'
+}
+
+function shuffle(array) {
+  array.sort(() => Math.random() - 0.5)
 }

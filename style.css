@@ -226,3 +226,17 @@ td {
   font-size: 1.3em;
   font-weight: 500;
 }
+
+.best-score {
+  font-weight: 200;
+
+  margin: auto;
+  text-align: center;
+
+  transform: translateY(-150%);
+}
+
+.best-score-num {
+  font-weight: 500;
+  margin-left: 5px;
+}

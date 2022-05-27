@@ -8,8 +8,9 @@ function shuffle(array) {
   array.sort(() => Math.random() - 0.5)
 }
 
-function addCellClass(cell, i, j) {
-  var className = ` cell cell-${i}-${j}`
+function addCellClass(i, j) {
+  var cell = gBoard[i][j]
+  var className = `cell cell-${i}-${j}`
 
   if (cell.isMarked) className = 'marked ' + className
   if (!cell.minesAround && cell.isShown) className = 'empty ' + className
@@ -24,14 +25,17 @@ function addCellClass(cell, i, j) {
 
 function setDiff(elDiff) {
   if (elDiff.className === 'easy') {
+    gLevel.level = 'easy'
     gLevel.size = 4
     gLevel.mines = 2
   }
   if (elDiff.className === 'medium') {
+    gLevel.level = 'medium'
     gLevel.size = 8
     gLevel.mines = 12
   }
   if (elDiff.className === 'hard') {
+    gLevel.level = 'hard'
     gLevel.size = 12
     gLevel.mines = 30
   }
@@ -69,4 +73,16 @@ function resetDom() {
     elHelpSigns[i].classList.add('hide-help-sign')
     LIFES[i].classList.remove('hidden')
   }
+}
+
+function renderCell(i, j, display) {
+  var elCell = document.querySelector(`.cell-${i}-${j}`)
+  var className = addCellClass(i, j)
+  console.log(elCell)
+  var cellValue = gBoard[i][j].minesAround
+  if (gBoard[i][j].isShown) return
+  if (gBoard[i][j].isMine) cellValue = 'M'
+  if (!gBoard[i][j].minesAround) cellValue = ''
+
+  elCell.innerHTML = display ? cellValue : ''
 }

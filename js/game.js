@@ -6,13 +6,23 @@ const EL_FLAG = document.querySelector('.flags-text')
 const EL_TIME = document.querySelector('.time-text')
 const SMILEY = document.querySelector('.smiley')
 const LIFES = document.querySelectorAll('.live')
+const BEST_SCORE = document.querySelector('.best-score-num')
 
 var gMark = 2
-
+console.log(window.localStorage.getItem('easy'))
+console.log(window.localStorage.getItem('medium'))
+console.log(window.localStorage.getItem('hard'))
 var gBoard
 var gInterval
 
+const gBestScores = {
+  easy: 100000,
+  medium: 100000,
+  hard: 100000,
+}
+
 var gLevel = {
+  level: 'easy',
   size: 4,
   mines: 2,
 }
@@ -29,6 +39,8 @@ var gGame = {
 function initGame() {
   gBoard = buildBoard()
   renderBoard(gBoard)
+  BEST_SCORE.innerText = window.localStorage.getItem(gLevel.level)
+  console.log('heelow')
 }
 
 function buildBoard() {
@@ -59,7 +71,7 @@ function renderBoard(board) {
       var cell = board[i][j]
       cell.minesAround = setMinesNegsCount(gBoard, i, j)
 
-      var className = addCellClass(cell, i, j)
+      var className = addCellClass(i, j)
 
       var cellValue = cell.isMine ? BOMB : cell.minesAround
       if (!cellValue) cellValue = ''
@@ -151,8 +163,15 @@ function markCell(elCell, e, i, j) {
 
 function checkGameWin() {
   if (gGame.markedCount + gGame.shownCount === gLevel.size ** 2) {
+    //check game diff
+    var gameDiff = gLevel.level
+    if (gGame.secsPassed < gBestScores[gameDiff]) {
+      gBestScores[gameDiff] = gGame.secsPassed
+      window.localStorage.removeItem(gameDiff)
+      window.localStorage.setItem(gameDiff, gGame.secsPassed)
+    }
     console.log('you won')
-    SMILEY.src = '/imges/won.svg'
+    SMILEY.src = 'imges/won.svg'
     clearInterval(gInterval)
   }
 }
@@ -208,10 +227,10 @@ function getHelp(posI, posJ, display = true) {
 
       // if (i === posI && j === posJ) continue
 
-      gBoard[i][j].isShown = display
+      // gBoard[i][j].isShown = display
+      renderCell(i, j, display)
     }
   }
-  renderBoard(gBoard)
 }
 
 function resetGame() {

@@ -32,6 +32,7 @@ function showHelp() {
 }
 
 function activateHelp(elHelp) {
+  if (gGame.gameEnd) return
   gGame.isHelp = true
   elHelp.src = 'imges/active-help.svg'
   elHelp.id = 'active-cell'
@@ -53,6 +54,7 @@ function resetDom() {
 
   for (var i = 0; i < elHelpSigns.length; i++) {
     elHelpSigns[i].classList.add('hide-help-sign')
+    elHelpSigns[i].src = 'imges/help.svg'
     LIFES[i].classList.remove('hidden')
   }
 }
@@ -62,18 +64,13 @@ function renderCell(i, j, display) {
   var className = addCellClass(i, j)
   console.log(elCell)
   var cellValue = gBoard[i][j].minesAround
+  if (gBoard[i][j].isMarked) return
   if (gBoard[i][j].isShown) return
   if (gBoard[i][j].isMine) cellValue = 'M'
   // if (!gBoard[i][j].minesAround) cellValue = ''
 
   elCell.innerHTML = display ? cellValue : ''
 }
-
-// function getCellHTML(cell) {
-//   return `<td class="${className}" oncontextmenu="markCell(this, event, ${i},${j})" onclick="cellClicked(
-//         this ,${i},${j}
-//       )">${cellValue}</td>`
-// }
 
 function startGame() {
   renderBoard(gBoard)

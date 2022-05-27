@@ -38,6 +38,7 @@ function renderAllMines(board) {
       if (board[i][j].isMine) board[i][j].isShown = true
     }
   }
+  renderBoard(gBoard)
 }
 
 function cleanCustomMines() {

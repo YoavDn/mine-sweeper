@@ -33,8 +33,8 @@ var gGame = {
   helpsLeft: 3,
 }
 
-var gMark = 2
 // var gHistory = []
+var gMark = 2
 var gBoard
 var gInterval
 
@@ -80,11 +80,10 @@ function renderBoard(board) {
       cell.minesAround = setMinesNegsCount(gBoard, i, j)
 
       var className = addCellClass(i, j)
-
       var cellValue = cell.isMine ? BOMB : cell.minesAround
-      if (!cellValue) cellValue = ''
 
-      if (!cell.isShown) cellValue = ''
+      //print the value of the cell
+      if (!cellValue || !cell.isShown) cellValue = ''
       if (cell.isMarked) cellValue = FLAG
 
       strHtml += `<td class="${className}" oncontextmenu="markCell(this, event, ${i},${j})" onclick="cellClicked(
@@ -96,11 +95,12 @@ function renderBoard(board) {
   strHtml += `</table>`
 
   boardContainer.innerHTML = strHtml
-  EL_FLAG.innerText = gMark
+  EL_FLAG.innerText = gMark // update the dom
 }
 
 function cellClicked(elCell, i, j) {
-  if (gGame.gameEnd) return // if the game ended cant play
+  if (gGame.gameEnd) return
+
   // if the game is custom
   if (gCustom.isCustom) {
     gGame.customed = true
@@ -113,9 +113,7 @@ function cellClicked(elCell, i, j) {
     gBoard[i][j].isMine = true
     elCell.innerText = 'M'
     gCustom.customMinePos.push({ i, j })
-
     gCustom.customMinesCount--
-
     return
   }
   //first click to start
@@ -123,8 +121,21 @@ function cellClicked(elCell, i, j) {
     getRendomMinePos(gBoard, gLevel.mines)
     startGame()
   }
+  //help
+  if (gGame.isHelp) {
+    getHelp(i, j)
+    setTimeout(() => getHelp(i, j, false), 1000)
+    gGame.isHelp = false
+    //update lives
+    gGame.helpsLeft--
+    updateHelpSign()
+    return
+  }
 
-  if (gBoard[i][j].isMarked) gBoard[i][j].isMarked = false
+  if (gBoard[i][j].isMarked) {
+    gBoard[i][j].isMarked = false
+    gMark++
+  }
 
   //when cell contain mine
   if (gBoard[i][j].isMine && !gBoard[i][j].isShown) {
@@ -136,17 +147,6 @@ function cellClicked(elCell, i, j) {
     console.log(gBoard[i][j])
     console.log('ues')
     expandShown(i, j)
-  }
-
-  //help
-  if (gGame.isHelp) {
-    getHelp(i, j)
-    setTimeout(() => getHelp(i, j, false), 1000)
-    gGame.isHelp = false
-    //update lives
-    gGame.helpsLeft--
-    updateHelpSign()
-    return
   }
 
   if (gBoard[i][j].isShown === false) gGame.shownCount++
@@ -189,10 +189,11 @@ function checkGameWin() {
     //check game diff
     var gameDiff = gLevel.level
     if (gGame.secsPassed < gBestScores[gameDiff] && !gGame.customed) {
+      // only update best score if the game is not custom
       gBestScores[gameDiff] = gGame.secsPassed
       window.localStorage.removeItem(gameDiff)
       window.localStorage.setItem(gameDiff, gGame.secsPassed)
-      BEST_SCORE.innerText = window.localStorage.getItem(gameDiff) + 's'
+      BEST_SCORE.innerText = window.localStorage.getItem(gameDiff)
     }
     gGame.gameEnd = true
     console.log('you won')
@@ -213,7 +214,6 @@ function gameOver(board, i, j) {
   SMILEY.src = '/imges/lost.svg'
   console.log('You lost')
   renderAllMines(gBoard)
-  renderBoard(gBoard)
   clearInterval(gInterval)
 }
 

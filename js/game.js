@@ -8,13 +8,6 @@ const SMILEY = document.querySelector('.smiley')
 const LIFES = document.querySelectorAll('.live')
 const BEST_SCORE = document.querySelector('.best-score-num')
 
-var gMark = 2
-console.log(window.localStorage.getItem('easy'))
-console.log(window.localStorage.getItem('medium'))
-console.log(window.localStorage.getItem('hard'))
-var gBoard
-var gInterval
-
 const gBestScores = {
   easy: 100000,
   medium: 100000,
@@ -34,6 +27,17 @@ var gGame = {
   lives: 3,
   isHelp: false,
   helpsLeft: 3,
+}
+
+var gMark = 2
+// var gHistory = []
+var gBoard
+var gInterval
+
+var gCustom = {
+  isCustom: false,
+  customMinePos: [],
+  customMinesCount: gLevel.mines,
 }
 
 function initGame() {
@@ -92,18 +96,26 @@ function renderBoard(board) {
 }
 
 function cellClicked(elCell, i, j) {
+  if (gCustom.isCustom) {
+    if (gCustom.customMinesCount === 0) {
+      cleanCustomMines()
+      gCustom.isCustom = false
+      startGame()
+      return
+    }
+    gBoard[i][j].isMine = true
+    elCell.innerText = 'M'
+    gCustom.customMinePos.push({ i, j })
+
+    gCustom.customMinesCount--
+
+    return
+  }
   //first click to start
   if (!gGame.isOn) {
     getRendomMinePos(gBoard, gLevel.mines)
-    renderBoard(gBoard)
-
-    gInterval = setInterval(() => {
-      gGame.secsPassed++
-      EL_TIME.innerText = gGame.secsPassed
-    }, 1000)
-    gGame.isOn = true
+    startGame()
   }
-  // var cellPos = getCelPos(elCell)
 
   //when cell contain mine
   if (gBoard[i][j].isMine) {
@@ -169,6 +181,7 @@ function checkGameWin() {
       gBestScores[gameDiff] = gGame.secsPassed
       window.localStorage.removeItem(gameDiff)
       window.localStorage.setItem(gameDiff, gGame.secsPassed)
+      BEST_SCORE.innerText = window.localStorage.getItem(gameDiff) + 's'
     }
     console.log('you won')
     SMILEY.src = 'imges/won.svg'
@@ -243,8 +256,25 @@ function resetGame() {
     isHelp: false,
     helpsLeft: 3,
   }
+  gCustom = {
+    isCustom: false,
+    customMinePos: [],
+    customMinesCount: gLevel.mines,
+  }
   gMark = gLevel.mines
   resetDom()
   clearInterval(gInterval)
   initGame()
 }
+
+function customGame() {
+  resetGame()
+  gIsCustom = true
+}
+
+// function undo() {
+//   // var gBoard = gHistory.pop()
+//   console.log(gHistory)
+
+//   // renderBoard(gBoard)
+// }

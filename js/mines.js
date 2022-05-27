@@ -39,3 +39,12 @@ function renderAllMines(board) {
     }
   }
 }
+
+function cleanCustomMines() {
+  for (var i = 0; i < gCustom.customMinePos.length; i++) {
+    var elCell = document.querySelector(
+      `.cell-${gCustom.customMinePos[i].i}-${gCustom.customMinePos[i].j}`
+    )
+    elCell.innerText = ''
+  }
+}

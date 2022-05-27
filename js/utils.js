@@ -82,7 +82,23 @@ function renderCell(i, j, display) {
   var cellValue = gBoard[i][j].minesAround
   if (gBoard[i][j].isShown) return
   if (gBoard[i][j].isMine) cellValue = 'M'
-  if (!gBoard[i][j].minesAround) cellValue = ''
+  // if (!gBoard[i][j].minesAround) cellValue = ''
 
   elCell.innerHTML = display ? cellValue : ''
+}
+
+// function getCellHTML(cell) {
+//   return `<td class="${className}" oncontextmenu="markCell(this, event, ${i},${j})" onclick="cellClicked(
+//         this ,${i},${j}
+//       )">${cellValue}</td>`
+// }
+
+function startGame() {
+  renderBoard(gBoard)
+
+  gInterval = setInterval(() => {
+    gGame.secsPassed++
+    EL_TIME.innerText = gGame.secsPassed
+  }, 1000)
+  gGame.isOn = true
 }

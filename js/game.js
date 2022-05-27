@@ -8,6 +8,7 @@ const SMILEY = document.querySelector('.smiley')
 const LIFES = document.querySelectorAll('.live')
 const BEST_SCORE = document.querySelector('.best-score-num')
 const DIFF = document.getElementById('diff')
+const CUSTOM = document.querySelector('.custom')
 
 const gBestScores = {
   easy: 100000,
@@ -28,6 +29,7 @@ var gGame = {
   secsPassed: 0,
   lives: 3,
   isHelp: false,
+  gameEnd: false,
   helpsLeft: 3,
 }
 
@@ -98,6 +100,8 @@ function renderBoard(board) {
 }
 
 function cellClicked(elCell, i, j) {
+  if (gGame.gameEnd) return // if the game ended cant play
+  // if the game is custom
   if (gCustom.isCustom) {
     gGame.customed = true
     if (gCustom.customMinesCount === 0) {
@@ -120,8 +124,10 @@ function cellClicked(elCell, i, j) {
     startGame()
   }
 
+  if (gBoard[i][j].isMarked) gBoard[i][j].isMarked = false
+
   //when cell contain mine
-  if (gBoard[i][j].isMine) {
+  if (gBoard[i][j].isMine && !gBoard[i][j].isShown) {
     gameOver(gBoard, i, j)
   }
 
@@ -154,6 +160,7 @@ function cellClicked(elCell, i, j) {
 function markCell(elCell, e, i, j) {
   e.preventDefault()
   if (gCustom.isCustom) return
+  if (gBoard[i][j].isShown) return
 
   // var cellPos = getCelPos(elCell)
   var cell = gBoard[i][j]
@@ -187,6 +194,7 @@ function checkGameWin() {
       window.localStorage.setItem(gameDiff, gGame.secsPassed)
       BEST_SCORE.innerText = window.localStorage.getItem(gameDiff) + 's'
     }
+    gGame.gameEnd = true
     console.log('you won')
     SMILEY.src = 'imges/won.svg'
     clearInterval(gInterval)
@@ -201,7 +209,7 @@ function gameOver(board, i, j) {
     }
     return
   }
-
+  gGame.gameEnd = true
   SMILEY.src = '/imges/lost.svg'
   console.log('You lost')
   renderAllMines(gBoard)
@@ -258,6 +266,7 @@ function resetGame() {
     markedCount: 0,
     secsPassed: 0,
     lives: 3,
+    gameWon: false,
     isHelp: false,
     helpsLeft: 3,
   }
@@ -275,6 +284,7 @@ function resetGame() {
 function customGame() {
   resetGame()
   gCustom.isCustom = true
+  CUSTOM.classList.add('red')
 }
 
 // function undo() {

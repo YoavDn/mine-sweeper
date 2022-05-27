@@ -23,25 +23,6 @@ function addCellClass(i, j) {
   return className
 }
 
-// function setDiff(elDiff) {
-//   if (elDiff.className === 'easy') {
-//     gLevel.level = 'easy'
-//     gLevel.size = 4
-//     gLevel.mines = 2
-//   }
-//   if (elDiff.className === 'medium') {
-//     gLevel.level = 'medium'
-//     gLevel.size = 8
-//     gLevel.mines = 12
-//   }
-//   if (elDiff.className === 'hard') {
-//     gLevel.level = 'hard'
-//     gLevel.size = 12
-//     gLevel.mines = 30
-//   }
-//   resetGame()
-// }
-
 function showHelp() {
   var elHelpSigns = document.querySelectorAll('.help')
 
@@ -66,6 +47,7 @@ function updateHelpSign() {
 function resetDom() {
   SMILEY.src = 'imges/normal.svg'
   EL_TIME.innerText = 0
+  CUSTOM.classList.remove('red')
 
   var elHelpSigns = document.querySelectorAll('.help')
 

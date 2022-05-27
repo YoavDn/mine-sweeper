@@ -23,24 +23,24 @@ function addCellClass(i, j) {
   return className
 }
 
-function setDiff(elDiff) {
-  if (elDiff.className === 'easy') {
-    gLevel.level = 'easy'
-    gLevel.size = 4
-    gLevel.mines = 2
-  }
-  if (elDiff.className === 'medium') {
-    gLevel.level = 'medium'
-    gLevel.size = 8
-    gLevel.mines = 12
-  }
-  if (elDiff.className === 'hard') {
-    gLevel.level = 'hard'
-    gLevel.size = 12
-    gLevel.mines = 30
-  }
-  resetGame()
-}
+// function setDiff(elDiff) {
+//   if (elDiff.className === 'easy') {
+//     gLevel.level = 'easy'
+//     gLevel.size = 4
+//     gLevel.mines = 2
+//   }
+//   if (elDiff.className === 'medium') {
+//     gLevel.level = 'medium'
+//     gLevel.size = 8
+//     gLevel.mines = 12
+//   }
+//   if (elDiff.className === 'hard') {
+//     gLevel.level = 'hard'
+//     gLevel.size = 12
+//     gLevel.mines = 30
+//   }
+//   resetGame()
+// }
 
 function showHelp() {
   var elHelpSigns = document.querySelectorAll('.help')
@@ -101,4 +101,26 @@ function startGame() {
     EL_TIME.innerText = gGame.secsPassed
   }, 1000)
   gGame.isOn = true
+}
+
+function setDiff() {
+  var diff = document.getElementById('diff')
+  var option = diff.options[diff.selectedIndex]
+  console.log(option.value)
+  if (option.value === 'easy') {
+    gLevel.level = 'easy'
+    gLevel.size = 4
+    gLevel.mines = 2
+  }
+  if (option.value === 'medium') {
+    gLevel.level = 'medium'
+    gLevel.size = 8
+    gLevel.mines = 12
+  }
+  if (option.value === 'hard') {
+    gLevel.level = 'hard'
+    gLevel.size = 12
+    gLevel.mines = 30
+  }
+  resetGame()
 }

@@ -7,6 +7,7 @@ const EL_TIME = document.querySelector('.time-text')
 const SMILEY = document.querySelector('.smiley')
 const LIFES = document.querySelectorAll('.live')
 const BEST_SCORE = document.querySelector('.best-score-num')
+const DIFF = document.getElementById('diff')
 
 const gBestScores = {
   easy: 100000,
@@ -21,6 +22,7 @@ var gLevel = {
 }
 var gGame = {
   isOn: false,
+  customed: false,
   shownCount: 0,
   markedCount: 0,
   secsPassed: 0,
@@ -97,6 +99,7 @@ function renderBoard(board) {
 
 function cellClicked(elCell, i, j) {
   if (gCustom.isCustom) {
+    gGame.customed = true
     if (gCustom.customMinesCount === 0) {
       cleanCustomMines()
       gCustom.isCustom = false
@@ -150,6 +153,7 @@ function cellClicked(elCell, i, j) {
 
 function markCell(elCell, e, i, j) {
   e.preventDefault()
+  if (gCustom.isCustom) return
 
   // var cellPos = getCelPos(elCell)
   var cell = gBoard[i][j]
@@ -177,7 +181,7 @@ function checkGameWin() {
   if (gGame.markedCount + gGame.shownCount === gLevel.size ** 2) {
     //check game diff
     var gameDiff = gLevel.level
-    if (gGame.secsPassed < gBestScores[gameDiff]) {
+    if (gGame.secsPassed < gBestScores[gameDiff] && !gGame.customed) {
       gBestScores[gameDiff] = gGame.secsPassed
       window.localStorage.removeItem(gameDiff)
       window.localStorage.setItem(gameDiff, gGame.secsPassed)
@@ -249,6 +253,7 @@ function getHelp(posI, posJ, display = true) {
 function resetGame() {
   gGame = {
     isOn: false,
+    customed: false,
     shownCount: 0,
     markedCount: 0,
     secsPassed: 0,
@@ -269,7 +274,7 @@ function resetGame() {
 
 function customGame() {
   resetGame()
-  gIsCustom = true
+  gCustom.isCustom = true
 }
 
 // function undo() {

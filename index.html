@@ -22,10 +22,14 @@
           <button class="circle"></button>
         </div>
         <ul class="diff">
+          <select id="diff" onchange="setDiff()">
+            <option value="" disabled selected hidden>Difficulty</option>
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
           <li class="custom" onclick="customGame()">Custom</li>
-          <li class="easy" onclick="setDiff(this)">Easy</li>
-          <li class="medium" onclick="setDiff(this)">Medium</li>
-          <li class="hard" onclick="setDiff(this)">Hard</li>
+
           <li class="help-nav" onclick="showHelp(this)">Help</li>
         </ul>
 

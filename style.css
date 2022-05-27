@@ -240,3 +240,12 @@ td {
   font-weight: 500;
   margin-left: 5px;
 }
+
+select {
+  border: none;
+  font-family: 'Inter', sans-serif;
+  background-color: var(--container-nav-bg-color);
+  color: var(--text-color);
+  font-size: 1.3rem;
+  margin-left: 3rem;
+}

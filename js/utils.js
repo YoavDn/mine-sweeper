@@ -49,8 +49,8 @@ function resetDom() {
   SMILEY.src = 'imges/normal.svg'
   EL_TIME.innerText = 0
   CUSTOM.classList.remove('red')
-
   var elHelpSigns = document.querySelectorAll('.help')
+  CUSTOM.classList.remove('red')
 
   for (var i = 0; i < elHelpSigns.length; i++) {
     elHelpSigns[i].classList.add('hide-help-sign')

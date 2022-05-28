@@ -8,7 +8,7 @@ const SMILEY = document.querySelector('.smiley')
 const LIFES = document.querySelectorAll('.live')
 const BEST_SCORE = document.querySelector('.best-score-num')
 const DIFF = document.getElementById('diff')
-const CUSTOM = document.querySelector('.custom')
+const CUSTOM = document.getElementById('custom')
 const SAFE_BTN = document.querySelectorAll('.circle')
 
 var gBestScores = {
@@ -289,10 +289,11 @@ function resetGame() {
   initGame()
 }
 
-function customGame() {
-  resetGame()
-  gCustom.isCustom = true
-  CUSTOM.classList.add('red')
+function customGame(elBtn) {
+  gCustom.isCustom = !gCustom.isCustom
+  elBtn.classList.add('red')
+  if (!gCustom.isCustom) resetGame()
+  console.log(gCustom.isCustom)
 }
 
 function getRandomSafePos(board) {

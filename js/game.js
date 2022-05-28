@@ -31,7 +31,7 @@ var gGame = {
   shownCount: 0,
   markedCount: 0,
   secsPassed: 0,
-  lives: 3,
+  lives: 1,
   helpsLeft: 3,
   safeClickLeft: 3,
 }
@@ -51,6 +51,10 @@ function initGame() {
   renderBoard(gBoard)
 
   BEST_SCORE.innerText = window.localStorage.getItem(gLevel.level)
+  if (gLevel.level === 'easy') {
+    LIFES[0].classList.add('hidden')
+    LIFES[1].classList.add('hidden')
+  }
 }
 
 function buildBoard() {
@@ -190,6 +194,7 @@ function markCell(elCell, e, i, j) {
 }
 
 function checkGameWin() {
+  if (gGame.lives === 0) return
   if (gGame.markedCount + gGame.shownCount === gLevel.size ** 2) {
     //check game diff
     var gameDiff = gLevel.level
@@ -209,6 +214,12 @@ function checkGameWin() {
 
 function gameOver(board, i, j) {
   if (gGame.lives !== 0) {
+    if (!gGame.isHelp && gLevel.level === 'easy') {
+      console.log(LIFES, gGame.lives)
+      LIFES[2].classList.add('hidden') //
+      gGame.lives--
+      return
+    }
     if (!gGame.isHelp) {
       gGame.lives--
       LIFES[gGame.lives].classList.add('hidden') //

@@ -95,6 +95,7 @@ function setDiff() {
     gLevel.level = 'easy'
     gLevel.size = 4
     gLevel.mines = 2
+    gGame.lifes = 2
   }
   if (option.value === 'medium') {
     gLevel.level = 'medium'

@@ -9,8 +9,9 @@ const LIFES = document.querySelectorAll('.live')
 const BEST_SCORE = document.querySelector('.best-score-num')
 const DIFF = document.getElementById('diff')
 const CUSTOM = document.querySelector('.custom')
+const SAFE_BTN = document.querySelectorAll('.circle')
 
-const gBestScores = {
+var gBestScores = {
   easy: 100000,
   medium: 100000,
   hard: 100000,
@@ -35,7 +36,6 @@ var gGame = {
   safeClickLeft: 3,
 }
 
-// var gHistory = []
 var gMark = 2
 var gBoard
 var gInterval
@@ -51,7 +51,6 @@ function initGame() {
   renderBoard(gBoard)
 
   BEST_SCORE.innerText = window.localStorage.getItem(gLevel.level)
-  console.log('heelow')
 }
 
 function buildBoard() {
@@ -164,6 +163,7 @@ function cellClicked(elCell, i, j) {
 
 function markCell(elCell, e, i, j) {
   e.preventDefault()
+  if (gGame.gameEnd) return
   if (gCustom.isCustom) return
   if (gBoard[i][j].isShown) return
 
@@ -285,6 +285,7 @@ function resetGame() {
   gMark = gLevel.mines
   resetDom()
   clearInterval(gInterval)
+
   initGame()
 }
 
@@ -309,18 +310,12 @@ function getRandomSafePos(board) {
   return rendomPosArr.pop()
 }
 
-// function undo() {
-//   // var gBoard = gHistory.pop()
-//   console.log(gHistory)
-
-//   // renderBoard(gBoard)
-// }
-
 function activateSafeClick(elBtn) {
   if (gGame.safeClickLeft === 0) return
+  if (elBtn.classList.contains('safe-click-used')) return
   gGame.isSafeClick = true
-  console.log('hellose')
-  elBtn.style.backgroundColor = '#D52941'
+
+  elBtn.classList.add('safe-click-used')
   showSafeCell()
 }
 

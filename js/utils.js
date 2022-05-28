@@ -56,6 +56,7 @@ function resetDom() {
     elHelpSigns[i].classList.add('hide-help-sign')
     elHelpSigns[i].src = 'imges/help.svg'
     LIFES[i].classList.remove('hidden')
+    SAFE_BTN[i].classList.remove('safe-click-used')
   }
 }
 

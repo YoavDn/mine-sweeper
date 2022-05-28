@@ -249,3 +249,7 @@ select {
   font-size: 1.3rem;
   margin-left: 3rem;
 }
+
+.safe-click-used {
+  background-color: #d52941;
+}

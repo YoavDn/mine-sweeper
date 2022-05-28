@@ -11,7 +11,7 @@ function getRendomMinePos(board, mineCount) {
   minesPosArr = minesPosArr.slice(-mineCount)
 
   for (var i = 0; i < minesPosArr.length; i++) {
-    gBoard[minesPosArr[i].i][minesPosArr[i].j].isMine = true
+    board[minesPosArr[i].i][minesPosArr[i].j].isMine = true
   }
   // console.log(minesPosArr)
 }

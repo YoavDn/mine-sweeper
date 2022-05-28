@@ -103,3 +103,8 @@ function setDiff() {
   }
   resetGame()
 }
+
+function reveleSafeCell(i, j, display) {
+  var elCell = document.querySelector(`.cell-${i}-${j}`)
+  elCell.style.backgroundColor = display ? 'green' : '#474747'
+}

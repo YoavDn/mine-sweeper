@@ -24,13 +24,15 @@ var gLevel = {
 var gGame = {
   isOn: false,
   customed: false,
+  isHelp: false,
+  isSafeClick: false,
+  gameEnd: false,
   shownCount: 0,
   markedCount: 0,
   secsPassed: 0,
   lives: 3,
-  isHelp: false,
-  gameEnd: false,
   helpsLeft: 3,
+  safeClickLeft: 3,
 }
 
 // var gHistory = []
@@ -47,6 +49,7 @@ var gCustom = {
 function initGame() {
   gBoard = buildBoard()
   renderBoard(gBoard)
+
   BEST_SCORE.innerText = window.localStorage.getItem(gLevel.level)
   console.log('heelow')
 }
@@ -119,8 +122,10 @@ function cellClicked(elCell, i, j) {
   //first click to start
   if (!gGame.isOn) {
     getRendomMinePos(gBoard, gLevel.mines)
+
     startGame()
   }
+
   //help
   if (gGame.isHelp) {
     getHelp(i, j)
@@ -262,13 +267,15 @@ function resetGame() {
   gGame = {
     isOn: false,
     customed: false,
+    isHelp: false,
+    isSafeClick: false,
+    gameEnd: false,
     shownCount: 0,
     markedCount: 0,
     secsPassed: 0,
     lives: 3,
-    gameWon: false,
-    isHelp: false,
     helpsLeft: 3,
+    safeClickLeft: 3,
   }
   gCustom = {
     isCustom: false,
@@ -287,9 +294,40 @@ function customGame() {
   CUSTOM.classList.add('red')
 }
 
+function getRandomSafePos(board) {
+  var rendomPosArr = []
+
+  for (var i = 0; i < board.length; i++) {
+    for (var j = 0; j < board[0].length; j++) {
+      if (!board[i][j].isMine && !board[i][j].isShown)
+        rendomPosArr.push({ i, j })
+    }
+  }
+  console.log(rendomPosArr)
+  shuffle(rendomPosArr)
+
+  return rendomPosArr.pop()
+}
+
 // function undo() {
 //   // var gBoard = gHistory.pop()
 //   console.log(gHistory)
 
 //   // renderBoard(gBoard)
 // }
+
+function activateSafeClick(elBtn) {
+  if (gGame.safeClickLeft === 0) return
+  gGame.isSafeClick = true
+  console.log('hellose')
+  elBtn.style.backgroundColor = '#D52941'
+  showSafeCell()
+}
+
+function showSafeCell() {
+  var safePos = getRandomSafePos(gBoard)
+  reveleSafeCell(safePos.i, safePos.j, true)
+  setTimeout(() => reveleSafeCell(safePos.i, safePos.j, false), 1000)
+  gGame.safeClickLeft--
+  gGame.isSafeClick = false
+}

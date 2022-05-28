@@ -290,6 +290,7 @@ function resetGame() {
 }
 
 function customGame(elBtn) {
+  if (gGame.isOn) return
   gCustom.isCustom = !gCustom.isCustom
   elBtn.classList.add('red')
   if (!gCustom.isCustom) resetGame()

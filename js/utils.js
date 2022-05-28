@@ -25,9 +25,12 @@ function addCellClass(i, j) {
 
 function showHelp() {
   var elHelpSigns = document.querySelectorAll('.help')
+  // var elUsedSign = document.querySelectorAll('[id^=used')
 
   for (var i = 0; i < elHelpSigns.length; i++) {
-    elHelpSigns[i].classList.toggle('hide-help-sign')
+    if (elHelpSigns[i].id !== 'used') {
+      elHelpSigns[i].classList.toggle('hide-help-sign')
+    }
   }
 }
 
@@ -54,6 +57,7 @@ function resetDom() {
 
   for (var i = 0; i < elHelpSigns.length; i++) {
     elHelpSigns[i].classList.add('hide-help-sign')
+    elHelpSigns[i].id = 'not-used'
     elHelpSigns[i].src = 'imges/help.svg'
     LIFES[i].classList.remove('hidden')
     SAFE_BTN[i].classList.remove('safe-click-used')
